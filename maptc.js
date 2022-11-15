@@ -8,47 +8,18 @@ let info = {
 
 let archivo = 'package.json'
 
-function readFilePromise(file) {
-    return new Promise((resolve, reject) => {
-        fs.readFile(file, 'utf-8', (error, datos) => {
-            if(error) reject(error)
-            else resolve(datos)
-        })
-    })
-}
-
-function statFilePromise(file) {
-    return new Promise((resolve, reject) => {
-        fs.stat(file, (error, resultado) => {
-            if(error) reject(error)
-            else resolve(resultado)
-        })
-    })
-}
-
-function writFilePromise(file, object) {
-    return new Promise((resolve, reject) => {
-        fs.writeFile(file, JSON.stringify(object), (error) => {
-            if(error) reject(error)
-            else resolve("Archivo guardado con exito!")
-        })
-    })
-}
-readFilePromise(archivo)
+fs.promises.readFile(archivo, 'utf-8')
 .then( datos => { 
     info.contenidoStr = datos
-    return readFilePromise(archivo)
+    return fs.promises.readFile(archivo, 'utf-8')
 })
 .then( datos => { 
     info.contenidoObj = JSON.parse(datos)
-    return statFilePromise(archivo)
+    return fs.promises.stat(archivo)
 })
 .then( datos => { 
     info.size = datos.size 
     console.log(info)
-    return writFilePromise("info_ms.txt", info)
-})
-.then( resultado => { 
-    console.log(resultado)
+    return fs.promises.writeFile("info_ms.txt", JSON.stringify(info))
 })
 .catch(error => console.log(error))
